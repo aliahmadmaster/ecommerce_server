@@ -1,0 +1,5 @@
+.env
+/node_modules
+ecommerce_db_tables_sheet.xlsx
+/src/public
+package-lock.json
