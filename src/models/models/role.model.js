@@ -1,7 +1,6 @@
-import { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
 
-const roleSchema = new Schema({
+const roleSchema = new mongoose.Schema({
   name: { type: String },
 });
-
-export default model("Role", roleSchema);
+module.exports = mongoose.model("Role", roleSchema);
