@@ -1,9 +1,9 @@
 require("dotenv").config();
 
 const express = require("express");
-// import { connect, connection } from "mongoose";
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
+const path = require("path");
 
 const app = express();
 
@@ -17,7 +17,7 @@ const db = require("./models");
 
 // const routes = require("./routes");
 
-// app.use("/public", static(path.resolve(__dirname, "public")));
+app.use("/public", express.static(path.resolve(__dirname, "public")));
 // app.use("/api", routes);
 app.get("/", (req, res) => res.send("Welcome to Ecommerce System"));
 
@@ -34,7 +34,8 @@ conn.on("error", (error) => {
 });
 conn.once("open", () => {
   console.log("ecommerce_db connected");
+  // require("")();
   app.listen(port, () => {
-    console.log("server running http://localhost:", port);
+    console.log(`listning on http://localhost:${port}`);
   });
 });

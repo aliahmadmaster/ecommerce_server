@@ -1,6 +1,6 @@
-import { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
 
-const social_linkSchema = new Schema(
+const social_linkSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     url: { type: String, required: true },
@@ -9,4 +9,4 @@ const social_linkSchema = new Schema(
   { timestamps: true }
 );
 
-export default model("Social_Link", social_linkSchema);
+module.exports = mongoose.model("Social_Link", social_linkSchema);

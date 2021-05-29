@@ -1,10 +1,17 @@
-import { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
 
-const offerSchema = new Schema({
-  name: { type: String, required: true },
-  sku: { type: String },
-  percent: { type: String },
-  currency: { type: Schema.Types.ObjectId, ref: "Currency", required: true },
-  expiration: { type: Date, default: Date.now },
-});
-export default model("Offer", offerSchema);
+const offerSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    sku: { type: String },
+    percent: { type: String },
+    currency: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Currency",
+      required: true,
+    },
+    expiration: { type: Date, default: Date.now },
+  },
+  { timestamps: true }
+);
+module.exports = mongoose.model("Offer", offerSchema);

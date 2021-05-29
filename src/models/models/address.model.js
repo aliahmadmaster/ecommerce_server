@@ -1,16 +1,6 @@
-import { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
 
-const addressSchema = new Schema(
-  {
-    street1: { type: String, required: true },
-    street2: { type: String },
-    city: { type: Schema.Types.ObjectId, ref: "City", required: true },
-    zip: { type: String, required: true },
-    location: { type: Point, required: false },
-  },
-  { timestamps: true }
-);
-const Point = new Schema({
+const Point = new mongoose.Schema({
   type: {
     type: String,
     enum: ["Point"],
@@ -22,4 +12,15 @@ const Point = new Schema({
   },
 });
 
-export default model("Address", addressSchema);
+const addressSchema = new mongoose.Schema(
+  {
+    street1: { type: String, required: true },
+    street2: { type: String },
+    city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
+    zip: { type: String, required: true },
+    location: { type: Point, required: false },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Address", addressSchema);

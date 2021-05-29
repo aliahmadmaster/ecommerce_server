@@ -1,9 +1,8 @@
-import { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
 
-const citySchema = new Schema({
+const citySchema = new mongoose.Schema({
   name: { type: String, required: true },
   code: { type: String },
-  state: { type: Schema.Types.ObjectId, ref: "State", required: true },
+  state: { type: mongoose.Schema.Types.ObjectId, ref: "State", required: true },
 });
-
-export default model("City", citySchema);
+module.exports = mongoose.model("City", citySchema);

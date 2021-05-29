@@ -1,10 +1,9 @@
-import { Schema, model } from "mongoose";
+const mongoose = require("mongoose");
 
-const countrySchema = new Schema({
+const countrySchema = new mongoose.Schema({
   name: { type: String, required: true },
   code: { type: String, required: false },
   flag: { type: String, required: false },
-  states: [{ type: Schema.Types.ObjectId, ref: "State" }],
+  states: [{ type: mongoose.Schema.Types.ObjectId, ref: "State" }],
 });
-
-export default model("Country", countrySchema);
+module.exports = mongoose.model("Country", countrySchema);
