@@ -15,10 +15,10 @@ app.use(fileUpload());
 
 const db = require("./models");
 
-// const routes = require("./routes");
+const routes = require("./routes");
 
 app.use("/public", express.static(path.resolve(__dirname, "public")));
-// app.use("/api", routes);
+app.use("/ecommerce", routes);
 app.get("/", (req, res) => res.send("Welcome to Ecommerce System"));
 
 app.get("/*", (req, res) => res.send("Route not found!"));
@@ -27,6 +27,7 @@ db.mongoose.connect(process.env.Database_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
+  useFindAndModify: false,
 });
 const conn = db.mongoose.connection;
 conn.on("error", (error) => {
@@ -34,7 +35,7 @@ conn.on("error", (error) => {
 });
 conn.once("open", () => {
   console.log("ecommerce_db connected");
-  // require("")();
+  require("./controllers/controllerStaticDataInput")();
   app.listen(port, () => {
     console.log(`listning on http://localhost:${port}`);
   });

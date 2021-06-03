@@ -1,0 +1,24 @@
+{
+    "CODES":{
+        "codeSuccess": 200,
+        "codeServerError": 500,
+        "codeUnAuth": 401,
+        "codeNotFound":404,
+        "codeBadRequest": 400
+    },
+    "MESSAGES":{
+        "200": "success",
+        "500": "internal server error",
+        "401": "unauthorized user",
+        "404": "resource not found",
+        "400": "bad request invalid data"
+    },
+    "RESOURCE_OPERATION":{
+        "UPDATED": {
+            "msg":"Resource Updated Success"
+        },
+        "DELETED":{
+            "msg":"Resource Deleted Success"
+        }
+    }
+}
