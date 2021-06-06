@@ -45,9 +45,8 @@ userSchema.pre("save", function (next) {
   // generate a salt
   bcrypt.genSalt(10, function (err, salt) {
     if (err) return next(err);
-
     // hash the password using our new salt
-    bcrypt.hash(user.password, salt, function (err, hash) {
+    bcrypt.hashSync(user.password, salt, function (err, hash) {
       if (err) return next(err);
       // override the cleartext password with the hashed one
       user.password = hash;
@@ -55,12 +54,6 @@ userSchema.pre("save", function (next) {
     });
   });
 });
-userSchema.methods.comparePassword = function (candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
-};
 userSchema.plugin(uniqueValidator, { message: "is already taken." });
 
 userSchema.plugin(mongoosePaginate);

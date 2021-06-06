@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 
 const countrySchema = new mongoose.Schema({
+  iso: { type: String, required: true },
   name: { type: String, required: true },
-  code: { type: String, required: false },
-  flag: { type: String, required: false },
-  states: [{ type: mongoose.Schema.Types.ObjectId, ref: "State" }],
+  nice_name: { type: String, required: true },
+  iso3: { type: String },
+  num_code: { type: Number },
+  phone_code: { type: Number, required: false },
 });
 module.exports = mongoose.model("Country", countrySchema);

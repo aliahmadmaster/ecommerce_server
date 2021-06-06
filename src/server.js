@@ -36,6 +36,8 @@ conn.on("error", (error) => {
 conn.once("open", () => {
   console.log("ecommerce_db connected");
   require("./controllers/controllerStaticDataInput")();
+  require("./controllers/controllerCountriesStaticInput")();
+  require("./controllers/controllerStatesStaticInput")();
   app.listen(port, () => {
     console.log(`listning on http://localhost:${port}`);
   });
