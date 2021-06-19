@@ -3,7 +3,7 @@
  *
  * for JawaidESolutions Backend service E-Commerce Management
  */
-const db = require("../models");
+const db = require("../../models");
 
 var countriesData = [
   {
@@ -14,7 +14,6 @@ var countriesData = [
     num_code: 4,
     phone_code: 93,
   },
-
   {
     iso: "AL",
     name: "ALBANIA",

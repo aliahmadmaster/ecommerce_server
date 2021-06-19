@@ -1,4 +1,4 @@
-const controllers = require("../../controllers");
+const { controllerUser } = require("../../controllers");
 const app = require("express");
 const routerUser = app.Router();
 
@@ -8,5 +8,6 @@ const routerUser = app.Router();
 routerUser.get("/", (req, res) => {
   res.send("user routes");
 });
-routerUser.get("/users", controllers.controllerUser.allUsers);
+routerUser.get("/users", controllerUser.allUsers);
+routerUser.patch("/update/:idu", controllerUser.updateUser);
 module.exports = routerUser;

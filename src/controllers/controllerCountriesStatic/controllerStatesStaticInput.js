@@ -1,5 +1,5 @@
-const { country } = require("../models");
-const db = require("../models");
+// const { country } = require("../models");
+const db = require("../../models");
 
 var statesPakistan = [
   {

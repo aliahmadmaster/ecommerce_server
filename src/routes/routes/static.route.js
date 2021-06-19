@@ -13,7 +13,11 @@ routerStatic.post(`/${url}`, controllerStatic.createCountry);
 routerStatic.patch(`/${url}/:idc`, controllerStatic.updateCountry);
 routerStatic.delete(`/${url}/:idc`, controllerStatic.deleteCountry);
 routerStatic.get(`/${url}`, controllerStatic.getCountries);
+routerStatic.get(`/${url}/country-name`, controllerStatic.getCountryByName);
 routerStatic.get(`/${url}/:idc/states`, controllerStatic.getCountryStates);
-// routerStatic.get(`/${url}/:idc/states/:ids/cities`, controllerStatic.getStateCities);
+routerStatic.get(
+  `/${url}/:idc/state/:ids/cities`,
+  controllerStatic.getCountryStateCities
+);
 
 module.exports = routerStatic;

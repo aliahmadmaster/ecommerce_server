@@ -36,8 +36,9 @@ conn.on("error", (error) => {
 conn.once("open", () => {
   console.log("ecommerce_db connected");
   require("./controllers/controllerStaticDataInput")();
-  require("./controllers/controllerCountriesStaticInput")();
-  require("./controllers/controllerStatesStaticInput")();
+  require("./controllers/controllerCountriesStatic/controllerCountriesStaticInput")();
+  require("./controllers/controllerCountriesStatic/controllerStatesStaticInput")();
+  require("./controllers/controllerCountriesStatic/cities/controllerPakistanCitiesStaticInput")();
   app.listen(port, () => {
     console.log(`listning on http://localhost:${port}`);
   });

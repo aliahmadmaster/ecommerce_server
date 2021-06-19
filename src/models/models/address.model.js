@@ -18,7 +18,7 @@ const addressSchema = new mongoose.Schema(
     street2: { type: String },
     city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
     zip: { type: String, required: true },
-    location: { type: Point, required: false },
+    location: { type: Point, index: "2dsphere", required: false },
   },
   { timestamps: true }
 );

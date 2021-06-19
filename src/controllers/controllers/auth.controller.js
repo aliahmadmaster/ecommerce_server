@@ -1,6 +1,7 @@
 const db = require("../../models");
 const { CODES } = require("../../configs/responseMgr.json");
 const utils = require("../../utils");
+const mongoose = require("mongoose");
 
 var code = 0;
 // const fileExtensionType = ["jpg", "jpeg", "png"];
@@ -24,7 +25,7 @@ module.exports = {
         // finding role id by giving role name
         let resRole = await db.role.findOne({ name: role }).select("_id");
         data["role"] = resRole.id;
-        // saving user contacts in contact schema model
+        // saving user_contacts in contact schema model
         if (contacts && contacts.length > 0) {
           contacts = await db.contact.insertMany(contacts);
           data["contacts"] = contacts.map((contact) => contact.id); // saving their ids in user.contacts
@@ -36,30 +37,52 @@ module.exports = {
         }
         // saving social_links to its schema ....
         if (social_links && social_links.length > 0) {
-          social_links = await db.social_links.insertMany(social_links);
+          social_links = await db.social_link.insertMany(social_links);
           data["social_links"] = social_links.map((link) => link.id);
         }
         // saving addresses to its schema ....
         if (addresses && addresses.length > 0) {
+          addresses.map((address) => {
+            let location = {
+              type: "Point",
+              coordinates: [address.longitude, address.latitude],
+            };
+            delete address.longitude, delete address.latitude;
+            address["location"] = location;
+          });
           addresses = await db.address.insertMany(addresses);
           data["addresses"] = addresses.map((address) => address.id);
         }
-        data = await new db.user(data).save((err, user) => {
-          if (err) {
-            code = CODES.codeServerError;
-            utils.sendResponse(res, code, { error: err });
-          }
+
+        let user_data = await new db.user(data).save();
+        if (user_data) {
           code = CODES.codeSuccess;
-          utils.sendResponse(res, code, user);
-        });
+          utils.sendResponse(res, code, user_data);
+          return;
+        }
+        code = CODES.codeServerError;
+        utils.sendResponse(res, code, { error: err });
+        return;
+        // await new db.user(data).save((err, user) => {
+        //   if (err) {
+        //     code = CODES.codeServerError;
+        //     utils.sendResponse(res, code, { error: err });
+        //     return;
+        //   }
+        //   code = CODES.codeSuccess;
+        //   utils.sendResponse(res, code, user);
+        //   return;
+        // });
       } else {
         code = CODES.codeServerError;
         nameMessage = `first_name and last_name can't be empty`;
         utils.sendResponse(res, code, { error: nameMessage });
+        return;
       }
     } catch (err) {
       code = CODES.codeServerError;
       utils.sendResponse(res, code, err);
+      return;
     }
   },
   signIn: async (req, res) => {
