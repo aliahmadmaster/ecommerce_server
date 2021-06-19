@@ -2,6 +2,7 @@ const db = require("../../models");
 const { CODES } = require("../../configs/responseMgr.json");
 const utils = require("../../utils");
 const mongoose = require("mongoose");
+const { user } = require("../../models");
 
 var code = 0;
 // const fileExtensionType = ["jpg", "jpeg", "png"];
@@ -53,8 +54,12 @@ module.exports = {
           addresses = await db.address.insertMany(addresses);
           data["addresses"] = addresses.map((address) => address.id);
         }
-
-        let user_data = await new db.user(data).save();
+        let final_data = new db.user(data);
+        // let final_data = new user(data);
+        console.log(final_data);
+        let user_data = await final_data.save();
+        console.log("user_data", user_data);
+        /// user me data nhi save ho rha ... kyun...
         if (user_data) {
           code = CODES.codeSuccess;
           utils.sendResponse(res, code, user_data);
