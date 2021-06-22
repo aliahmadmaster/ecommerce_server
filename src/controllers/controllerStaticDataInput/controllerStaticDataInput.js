@@ -3,7 +3,7 @@
  *
  * for JawaidESolutions Backend service E-Commerce Management
  */
-const db = require("../models");
+const db = require("../../models");
 function funuserrole() {
   db.role.estimatedDocumentCount((err, count) => {
     if (!err && count === 0) {
@@ -37,6 +37,7 @@ function funuserrole() {
 
 function loadStaticData() {
   funuserrole();
+  require("./controllerCountriesStatic/controllerCountriesStaticInput")();
 }
 
 module.exports = loadStaticData;

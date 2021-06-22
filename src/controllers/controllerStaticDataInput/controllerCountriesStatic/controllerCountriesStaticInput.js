@@ -3,7 +3,7 @@
  *
  * for JawaidESolutions Backend service E-Commerce Management
  */
-const db = require("../../models");
+const db = require("../../../models");
 
 var countriesData = [
   {
@@ -1919,6 +1919,7 @@ function funCountries() {
 
 function loadCountriesStaticData() {
   funCountries();
+  require("./controllerStatesStaticInput")();
 }
 
 module.exports = loadCountriesStaticData;

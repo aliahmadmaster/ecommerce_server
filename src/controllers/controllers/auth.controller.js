@@ -1,7 +1,6 @@
 const db = require("../../models");
 const { CODES } = require("../../configs/responseMgr.json");
 const utils = require("../../utils");
-const mongoose = require("mongoose");
 const { user } = require("../../models");
 
 var code = 0;
@@ -54,30 +53,17 @@ module.exports = {
           addresses = await db.address.insertMany(addresses);
           data["addresses"] = addresses.map((address) => address.id);
         }
-        let final_data = new db.user(data);
-        // let final_data = new user(data);
-        console.log(final_data);
-        let user_data = await final_data.save();
-        console.log("user_data", user_data);
-        /// user me data nhi save ho rha ... kyun...
-        if (user_data) {
+        await new db.user(data).save((err, user) => {
+          if (err) {
+            code = CODES.codeServerError;
+            utils.sendResponse(res, code, { error: err });
+            return;
+          }
           code = CODES.codeSuccess;
-          utils.sendResponse(res, code, user_data);
+          registerMessage = `user Registered Successfully.`;
+          utils.sendResponse(res, code, registerMessage);
           return;
-        }
-        code = CODES.codeServerError;
-        utils.sendResponse(res, code, { error: err });
-        return;
-        // await new db.user(data).save((err, user) => {
-        //   if (err) {
-        //     code = CODES.codeServerError;
-        //     utils.sendResponse(res, code, { error: err });
-        //     return;
-        //   }
-        //   code = CODES.codeSuccess;
-        //   utils.sendResponse(res, code, user);
-        //   return;
-        // });
+        });
       } else {
         code = CODES.codeServerError;
         nameMessage = `first_name and last_name can't be empty`;

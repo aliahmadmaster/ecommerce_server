@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcrypt");
+
 var mongoosePaginate = require("mongoose-paginate-v2");
+
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -37,18 +39,24 @@ const userSchema = new mongoose.Schema(
 );
 userSchema.pre("save", function (next) {
   var user = this;
-  if (!user.isModified("password")) return next(); // only hash the password if it has been modified (or is new)
+
+  // only hash the password if it has been modified (or is new)
+  if (!user.isModified("password")) return next();
+
+  // generate a salt
   bcrypt.genSalt(10, function (err, salt) {
-    // generate a salt
     if (err) return next(err);
-    bcrypt.hashSync(user.password, salt, function (err, hash) {
-      // hash the password using our new salt
+    // hash the password using our new salt
+    bcrypt.hash(user.password, salt, function (err, hash) {
       if (err) return next(err);
-      user.password = hash; // override the cleartext password with the hashed one
+      // override the cleartext password with the hashed one
+      user.password = hash;
       next();
     });
   });
 });
 userSchema.plugin(uniqueValidator, { message: "is already taken." });
+
 userSchema.plugin(mongoosePaginate);
+
 module.exports = mongoose.model("User", userSchema);

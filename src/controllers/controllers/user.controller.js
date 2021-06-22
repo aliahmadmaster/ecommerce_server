@@ -1,6 +1,7 @@
 const db = require("../../models");
 const { CODES } = require("../../configs/responseMgr.json");
 const utils = require("../../utils");
+const { country } = require("../../models");
 
 var code = 0;
 // const fileExtensionType = ["jpg", "jpeg", "png"];
@@ -9,16 +10,35 @@ module.exports = {
   allUsers: async (req, res) => {
     code = CODES.codeSuccess;
     try {
+      let { Country, State, City } = req.query;
+
       db.user
         .find()
-        .populate("role", "-_id name")
+        .populate({
+          path: "role",
+          select: "-_id name",
+          match: { name: "Vender" },
+        })
         .populate("contacts", "-_id name number")
-        .populate("social_links")
+        .populate("social_links", "-_id name url")
         .populate({
           path: "addresses",
-          populate: {
-            path: "city",
-          },
+          select:
+            "-_id street1 street2 zip location.coordinates location.type city",
+          populate: [
+            {
+              path: "city",
+              select: "-_id name state",
+              populate: {
+                path: "state",
+                select: "-_id name state_code country",
+                populate: {
+                  path: "country",
+                  select: "-_id iso nice_name phone_code ",
+                },
+              },
+            },
+          ],
         })
         .select("-_id name email cnic gender active image_url")
         .exec((err, user) => {
@@ -26,14 +46,67 @@ module.exports = {
             utils.sendResponse(res, code, err);
             return;
           }
+          // let Length = user.length;
+          // let users = [];
+          // user.map((e) => {
+          //   e.addresses.map((add) => {
+          //     if (Country) {
+          //       if (add.city.state.country.nice_name == Country) {
+          //         if (State) {
+          //           if (add.city.state.name == State) {
+          //             if (City) {
+          //               if (add.city.name == City) {
+          //                 if (users == "") users.push(e);
+          //                 users.map((g) => {
+          //                   if (users.length < Length) {
+          //                     if (g.name != e.name) {
+          //                       users.push(e);
+          //                       g.name = e.name;
+          //                     }
+          //                   }
+          //                 });
+          //               }
+          //             } else {
+          //               if (users == "") users.push(e);
+          //               users.map((g) => {
+          //                 if (users.length < Length) {
+          //                   if (g.name != e.name) {
+          //                     users.push(e);
+          //                     g.name = e.name;
+          //                   }
+          //                 }
+          //               });
+          //             }
+          //           }
+          //         } else {
+          //           if (users == "") users.push(e);
+          //           users.map((g) => {
+          //             if (users.length < Length) {
+          //               if (g.name != e.name) {
+          //                 users.push(e);
+          //                 g.name = e.name;
+          //               }
+          //             }
+          //           });
+          //         }
+          //       }
+          //     } else {
+          //       if (users == "") users.push(e);
+          //       users.map((g) => {
+          //         if (users.length < Length) {
+          //           if (g.name != e.name) {
+          //             users.push(e);
+          //             g.name = e.name;
+          //           }
+          //         }
+          //       });
+          //     }
+          //   });
+          // });
           code = CODES.codeSuccess;
           utils.sendResponse(res, code, user);
           return;
         });
-      // .populate(
-      //   { path: "addresses", populate: { path: "city" } },
-      //   "street1 street2 zip location -_id"
-      // )
     } catch (err) {
       code = CODES.codeServerError;
       utils.sendResponse(res, code, err);
@@ -44,6 +117,12 @@ module.exports = {
     code = CODES.codeSuccess;
     try {
       let { idu } = req.params;
+      var user = await db.user.findById(idu);
+      if (!user) {
+        code = CODES.codeNotFound;
+        utils.sendResponse(res, code, { message: "user not found" });
+        return;
+      }
       let { data } = req.body;
       let { first_name, last_name, contacts, social_links, addresses, role } =
         data;
@@ -55,16 +134,12 @@ module.exports = {
         data["name"] = `${first_name} ${last_name}`; // saving full name by combining firstname and lastname
         delete data.first_name;
         delete data.last_name;
+        console.log(data);
         // finding role id by giving role name
         let resRole = await db.role.findOne({ name: role }).select("_id");
         data["role"] = resRole.id;
-
         if (contacts && contacts.length > 0) {
-          let user = db.user.findById(idu);
-          if (user) {
-            user_contacts = user.contacts;
-            console.log(user_contacts);
-          }
+          user_contacts = user.contacts;
         }
       }
     } catch (err) {

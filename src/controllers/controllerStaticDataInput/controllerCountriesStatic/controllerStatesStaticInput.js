@@ -1,5 +1,5 @@
 // const { country } = require("../models");
-const db = require("../../models");
+const db = require("../../../models");
 
 var statesPakistan = [
   {
@@ -1760,5 +1760,6 @@ async function funStates() {
 }
 function loadStatesStaticData() {
   funStates();
+  require("./cities/controllerPakistanCitiesStaticInput")();
 }
 module.exports = loadStatesStaticData;
