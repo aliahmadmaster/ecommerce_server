@@ -1,7 +1,6 @@
 const db = require("../../models");
 const { CODES } = require("../../configs/responseMgr.json");
 const utils = require("../../utils");
-const { country } = require("../../models");
 
 var code = 0;
 // const fileExtensionType = ["jpg", "jpeg", "png"];
@@ -10,15 +9,10 @@ module.exports = {
   allUsers: async (req, res) => {
     code = CODES.codeSuccess;
     try {
-      let { Country, State, City } = req.query;
-
+      // let { Country, State, City } = req.query;
       db.user
         .find()
-        .populate({
-          path: "role",
-          select: "-_id name",
-          match: { name: "Vender" },
-        })
+        .populate("role", "-_id name")
         .populate("contacts", "-_id name number")
         .populate("social_links", "-_id name url")
         .populate({
@@ -105,6 +99,55 @@ module.exports = {
           // });
           code = CODES.codeSuccess;
           utils.sendResponse(res, code, user);
+          return;
+        });
+    } catch (err) {
+      code = CODES.codeServerError;
+      utils.sendResponse(res, code, err);
+      return;
+    }
+  },
+  getRoleBaseUsers: async (req, res) => {
+    code = CODES.codeSuccess;
+    try {
+      let { Role } = req.query;
+      db.user
+        .find()
+        .populate({
+          path: "role",
+          select: "-_id name",
+          match: { name: `${Role}` },
+        })
+        .populate("contacts", "-_id name number")
+        .populate("social_links", "-_id name url")
+        .populate({
+          path: "addresses",
+          select:
+            "-_id street1 street2 zip location.coordinates location.type city",
+          populate: [
+            {
+              path: "city",
+              select: "-_id name state",
+              populate: {
+                path: "state",
+                select: "-_id name state_code country",
+                populate: {
+                  path: "country",
+                  select: "-_id iso nice_name phone_code ",
+                },
+              },
+            },
+          ],
+        })
+        .select("-_id name email cnic gender active image_url")
+        .exec((err, user) => {
+          if (err) {
+            utils.sendResponse(res, code, err);
+            return;
+          }
+          let users = user.filter((e) => e.role !== null);
+          code = CODES.codeSuccess;
+          utils.sendResponse(res, code, users);
           return;
         });
     } catch (err) {

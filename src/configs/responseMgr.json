@@ -4,12 +4,15 @@
         "codeServerError": 500,
         "codeUnAuth": 401,
         "codeNotFound":404,
-        "codeBadRequest": 400
+        "codeBadRequest": 400,
+        "codeForbidden":403
     },
     "MESSAGES":{
+
         "200": "success",
         "500": "internal server error",
         "401": "unauthorized user",
+        "403": "Forbidden unautherized",
         "404": "resource not found",
         "400": "bad request invalid data"
     },
