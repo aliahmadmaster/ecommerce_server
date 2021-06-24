@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
     },
     password: { type: String, required: true },
     cnic: { type: String, unique: true },
-    image_url: { type: String },
+    image_url: { type: String, default: "userProfiles/avatar.png" },
     gender: { type: String, enum: ["male", "female"] },
     role: {
       type: mongoose.Schema.Types.ObjectId,

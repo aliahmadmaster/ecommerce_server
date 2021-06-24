@@ -19,9 +19,11 @@ routerUser.get(
   [authJwt.verifyToken, authJwt.isAdmin],
   controllerUser.getRoleBaseUsers
 );
+routerUser.patch("/update", [authJwt.verifyToken], controllerUser.updateUser);
 routerUser.patch(
-  "/update/:idu",
+  "/profile",
   [authJwt.verifyToken],
-  controllerUser.updateUser
+  controllerUser.updateUserProfilePhoto
 );
+routerUser.get("/detail", [authJwt.verifyToken], controllerUser.getSingleUser);
 module.exports = routerUser;

@@ -1,9 +1,9 @@
 const db = require("../../models");
 const { CODES } = require("../../configs/responseMgr.json");
 const utils = require("../../utils");
+const fileExtensionType = ["jpg", "jpeg", "png"];
 
 var code = 0;
-// const fileExtensionType = ["jpg", "jpeg", "png"];
 
 module.exports = {
   allUsers: async (req, res) => {
@@ -185,6 +185,53 @@ module.exports = {
           user_contacts = user.contacts;
         }
       }
+    } catch (err) {
+      code = CODES.codeServerError;
+      utils.sendResponse(res, code, err);
+      return;
+    }
+  },
+  updateUserProfilePhoto: async (req, res) => {
+    let id = req.userId;
+    code = CODES.codeServerError;
+    let user = await db.user.findById(id);
+    if (!user) return utils.sendResponse(res, code, { msg: "user not found" });
+    let filePhoto = req.files && req.files["profile"];
+    if (!filePhoto)
+      return utils.sendResponse(res, code, { msg: "file profile not present" });
+    let fileNameArr = filePhoto.name.split(".");
+    let fileExtension = fileNameArr[fileNameArr.length - 1].toLowerCase();
+    if (fileExtensionType.indexOf(fileExtension) < 0)
+      return utils.sendResponse(res, code, null);
+    let fileUrl = `userProfiles/user_${id}_${Date.now()}.jpg`;
+    utils
+      .uploadFile(filePhoto, fileUrl)
+      .then(async () => {
+        let user = await db.user.updateOne({ _id: id }, { image_url: fileUrl });
+        if (user.result) {
+          code = CODES.codeSuccess;
+        }
+        utils.sendResponse(res, code, user);
+      })
+      .catch(() => utils.sendResponse(res, code, null));
+  },
+  getSingleUser: async (req, res) => {
+    try {
+      let id = req.userId;
+      code = CODES.codeSuccess;
+      let user = await db.user
+        .findById(id)
+        .populate("role")
+        .populate("contacts")
+        .populate("social_links")
+        .populate({
+          path: "addresses",
+          populate: {
+            path: "city",
+          },
+        });
+      if (!user) return utils.sendResponse(res, CODES.codeServerError, null);
+      utils.sendResponse(res, code, user);
     } catch (err) {
       code = CODES.codeServerError;
       utils.sendResponse(res, code, err);
