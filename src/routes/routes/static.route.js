@@ -20,4 +20,11 @@ routerStatic.get(
   controllerStatic.getCountryStateCities
 );
 
+url = "category";
+routerStatic.post(`/${url}`, controllerStatic.createCategory);
+routerStatic.patch(`/${url}/:idc`, controllerStatic.updateCategory);
+routerStatic.delete(`/${url}/:idc`, controllerStatic.daleteCategory);
+routerStatic.get(`/${url}`, controllerStatic.getCategories);
+routerStatic.get(`/${url}/:idc`, controllerStatic.getCategory);
+
 module.exports = routerStatic;

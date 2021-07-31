@@ -203,9 +203,9 @@ module.exports = {
     let fileExtension = fileNameArr[fileNameArr.length - 1].toLowerCase();
     if (fileExtensionType.indexOf(fileExtension) < 0)
       return utils.sendResponse(res, code, null);
-    let fileUrl = `userProfiles/user_${id}_${Date.now()}.jpg`;
+    let fileUrl = `userProfiles/${id}/user_${Date.now()}.jpg`;
     utils
-      .uploadFile(filePhoto, fileUrl)
+      .uploadFile(filePhoto, fileUrl, id)
       .then(async () => {
         let user = await db.user.updateOne({ _id: id }, { image_url: fileUrl });
         if (user.result) {

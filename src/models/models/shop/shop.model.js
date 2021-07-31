@@ -6,9 +6,11 @@ const shopSchema = new mongoose.Schema(
     name: { type: String, required: true },
     image: { type: String },
     description: { type: String },
-    owners: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    ],
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     addresses: [
       { type: mongoose.Schema.Types.ObjectId, ref: "Address", required: true },
     ],
@@ -28,12 +30,6 @@ const shopSchema = new mongoose.Schema(
       ref: "Shop_Plan",
       required: true,
     },
-    shop_products: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
   },
   { timestamps: true }
 );

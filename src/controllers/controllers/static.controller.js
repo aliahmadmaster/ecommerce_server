@@ -1,9 +1,12 @@
 const db = require("../../models");
 const { CODES } = require("../../configs/responseMgr.json");
 const utils = require("../../utils");
+
+const fileExtensionType = ["jpg", "jpeg", "png"];
 var code = 0;
 
 module.exports = {
+  // Country Related Controllers......
   createCountry: async (req, res) => {
     code = CODES.codeSuccess;
     try {
@@ -134,6 +137,110 @@ module.exports = {
       }
       code = CODES.codeServerError;
       utils.sendResponse(res, code, err);
+      return;
+    } catch (err) {
+      code = CODES.codeServerError;
+      utils.sendResponse(res, code, err);
+      return;
+    }
+  },
+
+  //Category Related Controllers...
+  getCategories: async (req, res) => {
+    code = CODES.codeSuccess;
+    try {
+      db.product_category.find().exec((err, categories) => {
+        if (err) {
+          code = CODES.codeServerError;
+          utils.sendResponse(res, code, err);
+          return;
+        }
+        utils.sendResponse(res, code, categories);
+        return;
+      });
+    } catch (err) {
+      code = CODES.codeServerError;
+      utils.sendResponse(res, code, err);
+      return;
+    }
+  },
+  getCategory: async (req, res) => {
+    code = CODES.codeSuccess;
+    try {
+      let { idc } = req.params;
+      let category = await db.product_category.findById(idc);
+      if (!category) {
+        code = CODES.codeServerError;
+        utils.sendResponse(res, code, err);
+        return;
+      }
+      utils.sendResponse(res, code, category);
+      return;
+    } catch (err) {
+      code = CODES.codeServerError;
+      utils.sendResponse(res, code, err);
+      return;
+    }
+  },
+  createCategory: async (req, res) => {
+    code = CODES.codeSuccess;
+    try {
+      let { data } = req.body;
+      let image = req.files && req.files["image"];
+      if (!image) {
+        if (data) {
+          let category = await new db.product_category(data).save();
+          if (!category) {
+            code = CODES.codeServerError;
+            utils.sendResponse(res, code, err);
+            return;
+          }
+          utils.sendResponse(res, code, category);
+          return;
+        }
+      }
+      let fileNameArr = filePhoto.name.split(".");
+      let fileExtension = fileNameArr[fileNameArr.length - 1].toLowerCase();
+      if (fileExtensionType.indexOf(fileExtension) < 0)
+        return utils.sendResponse(res, code, null);
+      let fileUrl = `categoryImages/${data.name}.jpg`;
+      utils.saveFile(filePhoto, fileUrl).then();
+    } catch (err) {
+      code = CODES.codeServerError;
+      utils.sendResponse(res, code, err);
+      return;
+    }
+  },
+  updateCategory: async (req, res) => {
+    code = CODES.codeSuccess;
+    try {
+      let { idc } = req.params;
+      let { data } = req.body;
+      let category = await db.product_category.updateOne({ _id: idc }, data);
+      if (!category) {
+        code = CODES.codeServerError;
+        utils.sendResponse(res, code, err);
+        return;
+      }
+      utils.sendResponse(res, code, category);
+      return;
+    } catch (err) {
+      code = CODES.codeServerError;
+      utils.sendResponse(res, code, err);
+      return;
+    }
+  },
+  daleteCategory: async (req, res) => {
+    code = CODES.codeSuccess;
+    try {
+      let { idc } = req.params;
+      let category = await db.product_category.deleteOne({ _id: idc });
+      if (!category) {
+        code = CODES.codeServerError;
+        utils.sendResponse(res, code, err);
+        return;
+      }
+      utils.sendResponse(res, code, category);
       return;
     } catch (err) {
       code = CODES.codeServerError;
